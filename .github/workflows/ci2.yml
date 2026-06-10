@@ -1,4 +1,4 @@
-name: CI
+name: CIWindows
 
 on:
   push:
@@ -85,3 +85,21 @@ jobs:
           name: fig2json-windows-x86_64
           path: target/release/fig2json.exe
           if-no-files-found: error
+
+          build-windows:
+    runs-on: windows-latest
+    # 【必须添加】赋予创建 Release 的权限
+    permissions:
+      contents: write 
+
+    steps:
+      # ... (前面的步骤保持不变) ...
+
+      - name: Build release
+        run: cargo build --release --verbose
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        # 只有在 main 分支且带有 tag (如 v1.0.0) 时才触发自动发布
+        if: true
+        with:
+          files: target/release/fig2json.exe
